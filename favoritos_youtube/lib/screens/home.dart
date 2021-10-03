@@ -1,6 +1,9 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
+import 'package:favoritos_youtube/blocs/favorite_bloc.dart';
 import 'package:favoritos_youtube/blocs/videos_bloc.dart';
 import 'package:favoritos_youtube/delegates/data_search.dart';
+import 'package:favoritos_youtube/models/video.dart';
+import 'package:favoritos_youtube/screens/favorites.dart';
 import 'package:favoritos_youtube/widgets/video_tile.dart';
 import 'package:flutter/material.dart';
 
@@ -18,11 +21,19 @@ class Home extends StatelessWidget {
             actions: <Widget>[
               Align(
                 alignment: Alignment.center,
-                child: Text("0"),
+                child: StreamBuilder<Map<String,Video>>(
+                  stream: BlocProvider.getBloc<FavoriteBloc>().outFav,
+                  builder: (context, snapshot) {
+                    if(snapshot.hasData) return Text('${snapshot.data!.length}');
+                    else return Container();
+                  }
+                ),
               ),
               IconButton(
                 icon: Icon(Icons.star),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Favorites()));
+                },
               ),
               IconButton(
                 icon: Icon(Icons.search),
@@ -60,6 +71,7 @@ class Home extends StatelessWidget {
                 );
               } else
                 return Container();
-            }));
+            })
+            );
   }
 }
